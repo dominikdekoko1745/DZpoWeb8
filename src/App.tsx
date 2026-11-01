@@ -1,12 +1,24 @@
 import { useState, useEffect } from 'react';
-import type { UserProfile, AuthResponse } from './types';
 import { Loader } from './components/Loader';
 import { AuthForm } from './components/AuthForm';
 import { Profile } from './components/Profile';
 import './App.css';
 
-const API_BASE = 'https://inai-col2.fishrungames.com/api';
+export interface UserProfile {
+  id?: number | string;
+  email: string;
+  username?: string;
+  name?: string;
+  bio?: string;
+}
 
+export interface AuthResponse {
+  token?: string;
+  accessToken?: string;
+  user?: UserProfile;
+}
+
+const API_BASE = 'https://inai-col2.fishrungames.com/api';
 function App() {
   const [token, setToken] = useState<string | null>(localStorage.getItem('band_token'));
   const [profile, setProfile] = useState<UserProfile | null>(null);

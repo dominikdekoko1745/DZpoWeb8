@@ -1,5 +1,19 @@
 import React, { useState } from 'react';
-import type { UserProfile } from '../types';
+
+export interface UserProfile {
+  id?: number | string;
+  email: string;
+  username?: string;
+  name?: string;
+  bio?: string;
+}
+
+interface ProfileProps {
+  profile: UserProfile;
+  onUpdate: (updated: Partial<UserProfile>) => Promise<void>;
+  onLogout: () => void;
+}
+// дальше весь твой остальной код Profile...
 
 interface ProfileProps {
   profile: UserProfile;
