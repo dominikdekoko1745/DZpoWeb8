@@ -1,71 +1,69 @@
 import React, { useState } from 'react';
 
 interface AuthFormProps {
-  onLogin: (email: string, pass: string) => Promise<void>;
-  onRegister: (email: string, pass: string, name?: string) => Promise<void>;
+  onLogin: (username: string, pass: string) => Promise<void>;
+  onRegister: (username: string, pass: string) => Promise<void>;
 }
 
 export const AuthForm: React.FC<AuthFormProps> = ({ onLogin, onRegister }) => {
   const [isRegister, setIsRegister] = useState(false);
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [name, setName] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (isRegister) {
-      onRegister(email, password, name);
+      onRegister(username, password);
     } else {
-      onLogin(email, password);
+      onLogin(username, password);
     }
   };
 
   return (
-    <div style={{ background: '#1c1c1e', padding: '24px', borderRadius: '12px', width: '100%', maxWidth: '360px', margin: '0 auto' }}>
+    <div style={{ background: '#1c1c1e', padding: '24px', borderRadius: '12px', width: '100%', maxWidth: '380px', margin: '0 auto', boxSizing: 'border-box' }}>
       <h2 style={{ textAlign: 'center', marginBottom: '20px' }}>
-        {isRegister ? 'Регистрация' : 'Вход в фан-клуб'}
+        {isRegister ? 'Регистрация музыканта' : 'Вход в аккаунт'}
       </h2>
-      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-        {isRegister && (
+      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+        <div>
+          <label style={{ fontSize: '13px', color: '#aaa', display: 'block', marginBottom: '4px' }}>Имя пользователя (username):</label>
           <input
             type="text"
-            placeholder="Ваше имя / Никнейм"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
+            placeholder="Введите username"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
             required
-            style={{ padding: '10px', borderRadius: '6px', border: '1px solid #333', background: '#2c2c2e', color: '#fff' }}
+            style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid #333', background: '#2c2c2e', color: '#fff', boxSizing: 'border-box' }}
           />
-        )}
-        <input
-          type="email"
-          placeholder="Электронная почта"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-          style={{ padding: '10px', borderRadius: '6px', border: '1px solid #333', background: '#2c2c2e', color: '#fff' }}
-        />
-        <input
-          type="password"
-          placeholder="Пароль"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-          style={{ padding: '10px', borderRadius: '6px', border: '1px solid #333', background: '#2c2c2e', color: '#fff' }}
-        />
+        </div>
+
+        <div>
+          <label style={{ fontSize: '13px', color: '#aaa', display: 'block', marginBottom: '4px' }}>Пароль:</label>
+          <input
+            type="password"
+            placeholder="Введите пароль"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid #333', background: '#2c2c2e', color: '#fff', boxSizing: 'border-box' }}
+          />
+        </div>
+
         <button
           type="submit"
-          style={{ padding: '12px', background: '#ff4655', color: '#fff', border: 'none', borderRadius: '6px', fontWeight: 'bold', cursor: 'pointer', marginTop: '8px' }}
+          style={{ padding: '12px', background: '#ff4655', color: '#fff', border: 'none', borderRadius: '6px', fontWeight: 'bold', cursor: 'pointer', marginTop: '6px' }}
         >
           {isRegister ? 'Зарегистрироваться' : 'Войти'}
         </button>
       </form>
+
       <div style={{ textAlign: 'center', marginTop: '16px' }}>
         <button
           type="button"
           onClick={() => setIsRegister(!isRegister)}
           style={{ background: 'none', border: 'none', color: '#888', cursor: 'pointer', textDecoration: 'underline' }}
         >
-          {isRegister ? 'Уже есть аккаунт? Войти' : 'Нет аккаунта? Зарегистрироваться'}
+          {isRegister ? 'Уже зарегистрированы? Войти' : 'Нет аккаунта? Зарегистрироваться'}
         </button>
       </div>
     </div>
