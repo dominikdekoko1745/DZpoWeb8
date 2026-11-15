@@ -27,19 +27,32 @@ export const Profile: React.FC<ProfileProps> = ({ user, onUpdate, onLogout }) =>
   const [bio, setBio] = useState(user.profile?.bio || '');
   const [fee, setFee] = useState(user.profile?.fee || '');
 
-  const handleSave = async (e: React.FormEvent) => {
+  const [isSaving, setIsSaving] = useState(false);
+  const [error, setError] = useState('');
+
+  const handleSave = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    await onUpdate({
-      first_name: firstName,
-      specialization: specialization,
-      bio: bio,
-      fee: fee,
-    });
-    setIsEditing(false);
+    setIsSaving(true);
+    setError('');
+
+    try {
+      await onUpdate({
+        first_name: firstName,
+        specialization,
+        bio,
+        fee,
+      });
+      setIsEditing(false);
+    } catch (err) {
+      setError('Не удалось сохранить профиль. Попробуйте ещё раз.');
+      console.error(err);
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   return (
-    <div style={{ background: '#1c1c1e', padding: '24px', borderRadius: '12px', width: '100%', maxWidth: '460px', margin: '0 auto', boxSizing: 'border-box' }}>
+    <div style={{ background: '#1c1c1e', padding: '24px', borderRadius: '12px', width: '100%', maxWidth: '460px', margin: '0 auto', boxSizing: 'border-box', color: '#fff' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
         <h2 style={{ margin: 0 }}>Анкета музыканта</h2>
         <button
@@ -58,7 +71,7 @@ export const Profile: React.FC<ProfileProps> = ({ user, onUpdate, onLogout }) =>
             <strong>Специализация:</strong>{' '}
             {user.profile?.specialization_display || user.profile?.specialization || 'Не выбрана'}
           </div>
-          <div><strong>Гонорар (fee):</strong> {user.profile?.fee || '0'} $</div>
+          <div><strong>Гонорар:</strong> {user.profile?.fee || '0'} $</div>
           <div><strong>О себе:</strong> {user.profile?.bio || 'Информация отсутствует'}</div>
 
           <button
@@ -76,7 +89,7 @@ export const Profile: React.FC<ProfileProps> = ({ user, onUpdate, onLogout }) =>
               type="text"
               value={firstName}
               onChange={(e) => setFirstName(e.target.value)}
-              style={{ width: '100%', padding: '8px', borderRadius: '6px', border: '1px solid #333', background: '#2c2c2e', color: '#fff', boxSizing: 'border-box' }}
+              style={inputStyle}
             />
           </div>
 
@@ -85,23 +98,25 @@ export const Profile: React.FC<ProfileProps> = ({ user, onUpdate, onLogout }) =>
             <select
               value={specialization}
               onChange={(e) => setSpecialization(e.target.value)}
-              style={{ width: '100%', padding: '8px', borderRadius: '6px', border: '1px solid #333', background: '#2c2c2e', color: '#fff', boxSizing: 'border-box' }}
+              style={inputStyle}
             >
               <option value="vocals">Вокал</option>
               <option value="guitar">Гитара</option>
               <option value="bass">Бас-гитара</option>
               <option value="drums">Ударные</option>
               <option value="keys">Клавишные</option>
+              <option value="other">Другое</option>
             </select>
           </div>
 
           <div>
             <label style={{ fontSize: '13px', color: '#aaa' }}>Гонорар:</label>
             <input
-              type="text"
+              type="number"
+              min="0"
               value={fee}
               onChange={(e) => setFee(e.target.value)}
-              style={{ width: '100%', padding: '8px', borderRadius: '6px', border: '1px solid #333', background: '#2c2c2e', color: '#fff', boxSizing: 'border-box' }}
+              style={inputStyle}
             />
           </div>
 
@@ -111,21 +126,25 @@ export const Profile: React.FC<ProfileProps> = ({ user, onUpdate, onLogout }) =>
               rows={3}
               value={bio}
               onChange={(e) => setBio(e.target.value)}
-              style={{ width: '100%', padding: '8px', borderRadius: '6px', border: '1px solid #333', background: '#2c2c2e', color: '#fff', boxSizing: 'border-box' }}
+              style={inputStyle}
             />
           </div>
+
+          {error && <p style={{ color: '#ff4655', margin: 0 }}>{error}</p>}
 
           <div style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
             <button
               type="submit"
+              disabled={isSaving}
               style={{ flex: 1, padding: '10px', background: '#ff4655', color: '#fff', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: 'bold' }}
             >
-              Сохранить
+              {isSaving ? 'Сохранение...' : 'Сохранить'}
             </button>
             <button
               type="button"
+              disabled={isSaving}
               onClick={() => setIsEditing(false)}
-              style={{ flex: 1, padding: '10px', background: '#444', color: '#fff', border: 'none', borderRadius: '6px', cursor: 'pointer' }}
+              style={{ flex: 1, padding: '10px', background: '#333', color: '#fff', border: 'none', borderRadius: '6px', cursor: 'pointer' }}
             >
               Отмена
             </button>
@@ -134,4 +153,14 @@ export const Profile: React.FC<ProfileProps> = ({ user, onUpdate, onLogout }) =>
       )}
     </div>
   );
+};
+
+const inputStyle: React.CSSProperties = {
+  width: '100%',
+  padding: '8px',
+  borderRadius: '6px',
+  border: '1px solid #333',
+  background: '#2c2c2e',
+  color: '#fff',
+  boxSizing: 'border-box',
 };
